@@ -1,8 +1,8 @@
 # fatespace
 
-Multimodal latent cell-state model for T-cell fate prediction, benchmarked on
-human thymic T-cell development: progenitor to double-negative to
-double-positive to mature single-positive CD4/CD8 T cell.
+Multimodal autoencoder for latent cell-state modeling and T-cell fate
+prediction, benchmarked on human thymic T-cell development: progenitor to
+double-negative to double-positive to mature single-positive CD4/CD8 T cell.
 
 Three models are compared:
 - **Model A**: RNA-only reconstruction
