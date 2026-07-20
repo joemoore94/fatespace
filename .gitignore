@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Downloaded / generated data — never commit, always re-derivable via acquisition scripts
+data/raw/*
+data/processed/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
