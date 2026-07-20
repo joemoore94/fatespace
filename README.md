@@ -1,8 +1,8 @@
 # fatespace
 
 Multimodal latent cell-state model for T-cell fate prediction, benchmarked on
-human thymic T-cell development (progenitor to double-negative to
-double-positive to mature single-positive CD4/CD8 T cell).
+human thymic T-cell development: progenitor to double-negative to
+double-positive to mature single-positive CD4/CD8 T cell.
 
 Three models are compared:
 - **Model A**: RNA-only reconstruction
@@ -11,8 +11,7 @@ Three models are compared:
 
 Validated two ways: **decoding** (held-out reconstruction error) and
 **prediction** (linear-probe accuracy on annotated terminal cell type from
-frozen latent z, scored against the dataset's own labels rather than
-Palantir's output, to avoid circularity).
+frozen latent z, scored against the dataset's own labels).
 
 ## Data sources
 
