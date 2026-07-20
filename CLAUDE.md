@@ -5,9 +5,35 @@ Guidance for working in this repo.
 ## Current stage
 Data acquisition only. There is no model/training code yet — do not add
 PyTorch, encoders, VAEs, or training loops until the data layer below is
-acquired and validated. See the plan history for the full multi-phase
-roadmap (multimodal VAE, trajectory-aware training, ablations) that comes
-after this stage.
+acquired and validated. See "Modeling approach" below for the model and
+validation design that comes after this stage.
+
+## Modeling approach (future phases, not implemented yet)
+Three models will be compared once Phase 1/2 modeling starts:
+- **Model A**: RNA-only reconstruction (baseline)
+- **Model B**: RNA + protein + spatial reconstruction (no trajectory loss)
+- **Model C**: RNA + protein + spatial + trajectory supervision
+  (Palantir-derived pseudotime/fate)
+
+Validation splits into two axes:
+- **Decoding**: held-out reconstruction error per modality, Model B vs
+  Model C.
+- **Prediction**: linear-probe accuracy predicting annotated terminal cell
+  type (e.g. CD4 SP vs CD8 SP) from frozen latent z, Model B vs Model C.
+  Ground truth is the dataset's existing cell-type annotations, not
+  Palantir's own pseudotime/fate output — scoring against Palantir's own
+  output would be circular, since Palantir is computed from the same z
+  being evaluated.
+
+Pinned for later — how Palantir itself (Setty et al. 2019) validated
+without circularity, worth mirroring:
+1. Automatic terminal-state detection matched cell types already known from
+   prior literature.
+2. Marker-gene/transcription-factor trends along inferred trajectories
+   matched established developmental biology (e.g. GATA1, PU.1, MPO).
+3. Benchmarked against independent trajectory-inference methods (Slingshot,
+   PAGA, Monocle2, DPT, FateID).
+4. Reproducibility checked across independent donors/replicates.
 
 ## Tech stack
 Python 3.10+. CPU-only dependencies for this stage: `requests`, `pandas`,

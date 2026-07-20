@@ -2,9 +2,17 @@
 
 Multimodal latent cell-state model for T-cell fate prediction, benchmarked on
 human thymic T-cell development (progenitor to double-negative to
-double-positive to mature single-positive CD4/CD8 T cell). Tests whether
-adding developmental trajectory supervision to a learned RNA + protein +
-spatial latent space improves fate prediction over reconstruction alone.
+double-positive to mature single-positive CD4/CD8 T cell).
+
+Three models are compared:
+- **Model A**: RNA-only reconstruction
+- **Model B**: RNA + protein + spatial reconstruction
+- **Model C**: RNA + protein + spatial + trajectory supervision
+
+Validated two ways: **decoding** (held-out reconstruction error) and
+**prediction** (linear-probe accuracy on annotated terminal cell type from
+frozen latent z, scored against the dataset's own labels rather than
+Palantir's output, to avoid circularity).
 
 ## Data sources
 
