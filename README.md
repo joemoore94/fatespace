@@ -20,8 +20,9 @@ frozen latent z, scored against the dataset's own labels).
   RNA-seq and spatial transcriptomics data for the same organ.
 - Li et al. 2024, *Nature Communications*: [thymus spatial transcriptomics and
   single-cell multi-omics atlas](https://www.nature.com/articles/s41467-024-51767-y)
-  ([code](https://github.com/lihuamei/Thymus)). Accession still needs
-  confirming by a human; see `src/fatespace/acquire_thymus_atlas.py`.
+  ([code](https://github.com/lihuamei/Thymus)). Processed Seurat objects from
+  [Zenodo](https://doi.org/10.5281/zenodo.13207776); see
+  `src/fatespace/acquire_thymus_atlas.py`.
 
 ## Running data acquisition
 
