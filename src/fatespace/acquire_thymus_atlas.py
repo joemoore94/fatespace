@@ -7,17 +7,23 @@ multi-omics profiling" (Li et al., Nature Communications, 2024).
 Companion GitHub repo (analysis code, thymusTSO R package):
   https://github.com/lihuamei/Thymus
 
-STATUS: the exact accession (GEO/GSA/Zenodo/other) for the processed data was
-not resolved during planning -- the paper's Data Availability section and the
-GitHub repo both returned HTTP 403 to automated fetches from this
-environment, so it needs a direct human look. Rather than guess an accession
-and silently fetch the wrong (or no) data, this script fails loudly with
-clear next steps until DATASET_FILES below is filled in -- it will not
-pretend to have downloaded something it didn't.
+STATUS: resolved. Per the paper's Data Availability section (confirmed by a
+human, since automated fetches of that section were unreliable from this
+environment):
 
-To activate: visit the paper's Data Availability section and/or the GitHub
-repo above, confirm the accession and exact file URLs, then populate
-DATASET_FILES with {"label": ..., "url": ...} entries and re-run.
+- Processed data (what this script pulls) -- Seurat objects on Zenodo,
+  DOI 10.5281/zenodo.13207776: thymus.st.rds (spatial transcriptomics) and
+  thymus.sc.RDS (single-cell).
+- Raw sequence data -- GSA-Human (ngdc.cncb.ac.cn, restricted-access,
+  requires an application): HRA007984 (scRNA-seq), HRA007980 (spatial
+  transcriptomics), HRA007988 (scTCR-seq). Deliberately NOT pulled here --
+  raw and access-gated, out of scope per this project's processed-data-only
+  policy.
+- Other datasets the paper reuses from prior studies (Park et al. scRNA/
+  scTCR-seq, Zenodo 10.5281/zenodo.3572422; Cordes et al., GEO GSE195812;
+  Suo et al. spatial samples, https://developmental.cellatlas.io/fetal-immune)
+  are external to the Li et al. atlas itself and out of scope for this
+  script.
 """
 from __future__ import annotations
 
@@ -27,14 +33,22 @@ from fatespace.manifest import ManifestEntry, REPO_ROOT, append_manifest, stream
 
 PAPER_URL = "https://www.nature.com/articles/s41467-024-51767-y"
 REPO_URL = "https://github.com/lihuamei/Thymus"
+ZENODO_RECORD_URL = "https://doi.org/10.5281/zenodo.13207776"
 
 RAW_DIR = REPO_ROOT / "data" / "raw" / "thymus_atlas"
 
-# Fill in once the accession is confirmed, e.g.:
-# DATASET_FILES = [{"label": "processed_rna_spatial.h5ad", "url": "https://.../GSE.../processed.h5ad"}]
-DATASET_FILES: list[dict] = []
+DATASET_FILES: list[dict] = [
+    {
+        "label": "thymus.st.rds",
+        "url": "https://zenodo.org/api/records/13207776/files/thymus.st.rds/content",
+    },
+    {
+        "label": "thymus.sc.RDS",
+        "url": "https://zenodo.org/api/records/13207776/files/thymus.sc.RDS/content",
+    },
+]
 
-DEFAULT_PER_FILE_BUDGET_BYTES = 1 * 1024**3  # 1 GiB
+DEFAULT_PER_FILE_BUDGET_BYTES = 5 * 1024**3  # 5 GiB -- thymus.sc.RDS is ~4.1 GiB
 
 
 def acquire(per_file_budget: int = DEFAULT_PER_FILE_BUDGET_BYTES) -> list[ManifestEntry]:
