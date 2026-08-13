@@ -35,6 +35,43 @@ without circularity, worth mirroring:
    PAGA, Monocle2, DPT, FateID).
 4. Reproducibility checked across independent donors/replicates.
 
+## Potential future direction: pan-immune expansion (not scoped, not started)
+Discussed as a possible follow-on after Models A/B/C are validated on thymus
+data — not current work, and the "Current stage" rules above (no torch, no
+model code) still apply until this is picked up.
+
+Idea: split off from **Model A** (RNA-only) specifically, not B/C. Models
+B/C are thymus-bound by construction — the spatial/CODEX modality is
+HuBMAP-only, and the Palantir trajectory/fate supervision only makes sense
+along the one thymic developmental axis (DN→DP→SP). RNA-only reconstruction
+is the one piece that generalizes: scRNA is the modality most other
+immune-cell atlases share.
+
+Sketch:
+- Add scRNA datasets beyond the thymus atlas — candidates: the Open
+  Problems Single-Cell Perturbations dataset (PBMC, real primary immune
+  cells: T/B/NK/monocyte) and at least one more pan-immune atlas, TBD.
+- Open question: fine-tune Model A's thymus-trained weights on the added
+  data, or retrain the same RNA-only architecture from scratch on the
+  combined corpus. Treat as empirical, not assumed.
+- Multi-dataset batch effects (systematic non-biological differences
+  between cohorts/sequencing runs/chemistry versions) need correcting for,
+  not ignored. Natural fit: an scVI-style conditional-VAE design, where
+  batch/dataset identity is a covariate concatenated onto `z` and fed into
+  the decoder (`decoder(z, batch_onehot) → x_hat`), so the decoder absorbs
+  the technical shift and the encoder's `z` stays batch-agnostic.
+- Validation target changes: CD4 SP vs CD8 SP doesn't exist outside the
+  thymus. A pan-immune linear probe needs a broader cell-type target
+  (T/B/NK/monocyte/etc.), separate from the thymus-trajectory validation
+  Models B/C keep using.
+- Originally motivated by a further idea (even more speculative, fully
+  gated on this expansion happening first): a compound-perturbation decoder
+  head conditioned on SMILES/compound embeddings, predicting a cell's
+  post-treatment state from its baseline latent. Needs paired
+  compound-response data (e.g. Open Problems), which only exists for
+  PBMC-type cells, not thymocytes — hence why this depends on the
+  pan-immune expansion, not the other way around.
+
 ## Tech stack
 Python 3.10+. CPU-only dependencies for this stage: `requests`, `pandas`,
 `anndata`, `scanpy`, `pyyaml`. Do not add `torch` or any GPU dependency until
@@ -77,8 +114,11 @@ it exists.
   known-good hardcoded set of thymus donor dataset UUIDs; the organ-code
   API search is best-effort only).
 - `src/fatespace/acquire_thymus_atlas.py` — Li et al. 2024 thymus atlas
-  acquisition. Currently unconfigured: the exact GEO/Zenodo accession needs
-  human confirmation (see the paper/GitHub links in that file) before
-  `DATASET_FILES` can be populated.
+  acquisition. Resolved: processed Seurat objects on Zenodo (DOI
+  10.5281/zenodo.13207776), `DATASET_FILES` is populated and the script is
+  runnable.
+- `src/fatespace/convert_thymus_atlas.py` — converts acquired thymus atlas
+  `.rds` files to `.h5ad` via `readseurat`, writing to
+  `data/processed/manifest.json`.
 - `src/fatespace/manifest.py` — shared download/manifest helpers used by
   both acquisition scripts.
